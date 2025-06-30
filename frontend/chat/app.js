@@ -10,14 +10,16 @@ import { openProfile } from "../profile.js";
 // const userInfoGlobal = JSON.parse(buf);      // parsed once, reused below
 
 let ws;
+let userInfoGlobal;
 
 const buf = localStorage.getItem("userInfo");
 if (!buf) {
   document.getElementById("chat-block")?.classList.add("hidden");
-  window.location.href = "/login";
-  throw new Error("redirecting to /login");
-}
-const userInfoGlobal = JSON.parse(buf);
+  if (window.location.pathname !== "/login") {
+    window.location.href = "/login";
+  }
+} else {
+  userInfoGlobal = JSON.parse(buf);
 
 let __CURRENT_USER_ID = null;
 window.__CURRENT_USER_ID = null;
@@ -114,11 +116,12 @@ sendButton.onclick = () => {
 	messageInput.value = "";
 };
 messageInput.onkeydown = (event) => {
-	if (event.key === "Enter") {
-		const message = messageInput.value;
-		ws.send(
-			JSON.stringify({ message: message, userId: userIdDestination.value })
-		);
-		messageInput.value = "";
-	}
+        if (event.key === "Enter") {
+                const message = messageInput.value;
+                ws.send(
+                        JSON.stringify({ message: message, userId: userIdDestination.value })
+                );
+                messageInput.value = "";
+        }
 };
+}
